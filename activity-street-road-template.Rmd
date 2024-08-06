@@ -59,18 +59,39 @@ print(BoxNumbers$boxnum)
 Note: I have named the dataset voters instead of address.
 
 ```{r}
-
-
+Matches_PO <- voters %>% filter(str_detect(address, "PO"))
+Dont_PO <- voters %>% filter(!str_detect(address, "PO"))
+pattern <- "BOX\\s+(\\d+)"
+Matches_BOX <- voters %>% filter(str_detect(address, pattern))
+Dont_BOX <- voters %>% filter(!str_detect(address, pattern))
 ```
+
+```{r}
+print(Dont_PO)
+```
+```{r}
+print(Dont_BOX)
+```
+```{r}
+BoxNumbers <- Matches_BOX %>%
+  extract(address, into = "boxnum", regex = pattern)
+print(BoxNumbers$boxnum)
+```
+
 
 #### Additional Question: How many addresses are a PO BOX (including NCSU BOX)? 
 
 ```{r}
 
-
+pattern_PO_BOX <- "PO\\s+BOX|NCSU\\s+BOX"
+Matches_PO_BOX <- voters %>% filter(str_detect(address, pattern_PO_BOX))
+num_PO_BOX <- nrow(Matches_PO_BOX)
+num_PO_BOX
 ```
 
 My answer here...... 
+
+The number of PO Box addresses including NCSU are 10593.
 
 
 ## Back to the Streets: Your Turn
@@ -89,15 +110,27 @@ LeftOvers <-
 
 My answer here.......
 
+The code starts by defining a regex pattern to match street abbreviations like "ST", "RD", or "ROAD". It then filters the Addresses dataset, creating a new variable LeftOvers. The filter() function excludes rows where the address contains any of the specified abbreviations, apartment or unit designations (like "APT" or "UNIT" followed by digits), or the term "BOX" surrounded by spaces. This results in LeftOvers containing addresses that do not have any of these patterns.
+
 #### Part 2: Implement your method on the entire `Addresses` data set. Explain how your code works line by line.
 
 ```{r}
+pattern <- "(ST|RD|ROAD)"
 
+LeftOvers <- 
+  voters %>%
+  filter(
+    !grepl(pattern, address),
+    !grepl("\\sAPT|UNIT\\s[\\d]+$", address), 
+    !grepl(" BOX ", address)
+  )
 
-
+LeftOvers
 ```
 
 My answer here.......
+
+The code starts by defining a regex pattern to match common street abbreviations like "ST", "RD", or "ROAD". It then filters the voters dataset, creating a new variable LeftOvers. The filter() function is used to exclude rows where the address contains any of these abbreviations, as well as those with apartment or unit designations ("APT" or "UNIT" followed by digits at the end), and addresses that include the term "BOX" surrounded by spaces. The resulting LeftOvers dataset contains addresses that do not match these excluded patterns.
 
 #### Additional Question 1: Present your result from part 2 by providing a table in descending order of popularity for the street name endings you found
 
