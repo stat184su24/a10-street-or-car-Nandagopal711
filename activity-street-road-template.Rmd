@@ -135,7 +135,14 @@ The code starts by defining a regex pattern to match common street abbreviations
 #### Additional Question 1: Present your result from part 2 by providing a table in descending order of popularity for the street name endings you found
 
 ```{r}
-
+pattern_endings <- "(ST|RD|ROAD)$"
+StreetEndings <- voters %>%
+  filter(str_detect(address, pattern_endings)) %>%
+  mutate(ending = str_extract(address, pattern_endings)) %>%
+  count(ending)
+StreetEndings_sorted <- StreetEndings %>%
+  arrange(desc(n))
+print(StreetEndings_sorted)
 
 ```
 
@@ -144,9 +151,18 @@ The code starts by defining a regex pattern to match common street abbreviations
 Note: make sure your order street names according to popularity, not alphabetically.
 
 ```{r}
+ggplot(StreetEndings_sorted, aes(x = reorder(ending, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(x = "Street Name Ending", y = "Count", title = "Popularity of Street Name Endings") +
+  theme_minimal() +
+  coord_flip() 
 
 ```
 
 #### Additional Question 3: Comment on any patterns you see
 
 My answer here.......
+
+* RD is the most popular Street Name Ending with roughly 600 or so appearances
+* Second Being ST with more than 300 occurences but less than 400, we can estimate it to be around 350.
+* Lastly, the least popular street name ending is Road, with just below 200 appearances.
