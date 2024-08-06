@@ -1,6 +1,6 @@
 ---
 title: "Activity: Street or Road?"
-author: "YOUR NAME HERE"
+author: "Nandagopal Panicker"
 output: html_notebook
 ---
 
@@ -8,22 +8,55 @@ output: html_notebook
 
 ```{r}
 #load libraries 
-
+library(tidyverse)
 #load in the data here 
 # we will only be using the "street-addresses.csv" file from the text
-
-
+voters_file <- "C:\\Users\\nanda\\STAT 184 Summer\\Datasets\\street-addresses.csv"
+medicare_file <- "C:\\Users\\nanda\\STAT 184 Summer\\Datasets\\CMS_ProvidersSimple.rds"
+voters <- read.csv(voters_file)
+medicare <- readRDS(medicare_file)
 
 ```
+
+```{r}
+head(voters$address, 20)
+```
+```{r}
+head(medicare$address, 20)
+```
+
 
 ## Recreate Solved Example using `sample(50)`
 
 ```{r}
+Sample <- voters %>% sample_n(size = 50)
+Matches_PO <- Sample %>% filter(str_detect(address, "PO"))
+print(Matches_PO$address)
 
+```
+```{r}
+Dont_PO <- Sample %>% filter(!str_detect(address, "PO"))
+print(Dont_PO$address)
+```
+```{r}
+pattern <- "BOX\\s+(\\d+)"
+Matches_BOX <- Sample %>% filter(str_detect(address, pattern))
+print(Matches_BOX$address)
+```
+```{r}
+Dont_BOX <- Sample %>% filter(!str_detect(address, pattern))
+print(Dont_BOX)
+```
+```{r}
+BoxNumbers <- Matches_BOX %>%
+  extract(address, into = "boxnum", regex = pattern)
 
+print(BoxNumbers$boxnum)
 ```
 
 ## Recreate Soved Example using the entire `Address` data set
+
+Note: I have named the dataset voters instead of address.
 
 ```{r}
 
